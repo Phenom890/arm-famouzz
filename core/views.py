@@ -117,8 +117,8 @@ class CartView(View):
         else:
 
             return HttpResponse(
-                '<h1> <center>You have no active order. <br/> Add an item to your cart and check out '
-                'later!!!</center> </h1>')
+                '<h1> <center>You have no active order. <br/> Add an item to your cart and check '
+                'out later!!!</center> </h1>')
 
         context = {
             'cart_items': cart_items,

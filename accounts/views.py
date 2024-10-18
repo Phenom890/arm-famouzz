@@ -130,6 +130,7 @@ class OrderItemView(View):
 
         context = {
             'orders': all_orders,
+            'curr_order': curr_order,
             'order_items': curr_order_item,
         }
         return render(request, 'accounts/orders.html', context)

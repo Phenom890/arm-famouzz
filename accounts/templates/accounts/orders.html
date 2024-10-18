@@ -12,7 +12,7 @@
         <div class="row">
             <h3> Welcome <span class="text-capitalize"> {{ request.user }} </span></h3>
         
-        <div class="col-sm-2 border-end">
+        <div class="col-lg-2 border-end">
             <ul class="list-unstyled">
                 <li class="d-grid"><a href="{% url 'profile_update' %}" class="btn">
                 <i class="fas fa-user-alt me-2"></i>Profile</a>
@@ -21,7 +21,7 @@
                 <li class="d-grid"><a href="{% url 'orders' %}" class="btn btn-primary">Orders</a></li>
             </ul>
         </div>
-            <div class="col-sm-8 offset-sm-2">
+            <div class="col-lg-8 offset-lg-2">
                 <h1> Orders </h1>
 
                 <div class="row">
@@ -33,23 +33,36 @@
                                 <li class="d-grid">
                                     <a href="{% url 'order_item' order.id %}" class="btn">
                                         <ul class='list-unstyled'>
-                                            <li><h6>Ref Code : {{ order.ref_code }}</h6></li>
+                                            <li><h6>Ref Code : {{ order.ref_code }}</h6>
+                                            </li>
                                             <li>Refund Requested : {{ order.refund_requested }}</li>
                                             <li>Refund Granted : {{ order.refund_granted }}
                                             </li>
                                             <li>Created : {{ order.created }}</li>
                                             <li>Ordered : {{ order.ordered }}</li>
+                                            
+                                            {% if order.coupon %}
+                                                <li> {{ order.coupon }} - {{ order.coupon.coupon_percentage }}%</li>
+                                            {% endif %}
+                                                
+                                            <li>TOTAL : GHS {{ order.get_total_amount }}
+                                            </li>
                                         </ul>
                                     </a>
                                 </li>
                             {% endfor %}
                         </ul>
+                        
                                 
                     </div>
                     
                     <div class="col-md-7 col-lg-7">
-
                         <div class="row">
+                        
+                        {% if order_items %}
+                            <h5><center>Ref Code : {{ curr_order.ref_code }}</center></h5>
+                        {% endif %}
+                            
                         
                             {% for order_item in order_items %}
                                 <div class="col-lg-6 col-md-6 text-center">
@@ -58,6 +71,7 @@
                                     <p>Category :  {{ order_item.item.get_category_display }} </p>
                                     <p> {{ order_item.item.get_tag_display }} </p>
                                     <p> {{ order_item.item.description | truncatechars:20 }} </p>
+                                <hr>
                                 </div>
                             {% endfor %}
                                 
