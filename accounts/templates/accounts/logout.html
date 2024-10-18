@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    Logout
+{% endblock title %}
+
+
+
+
+
+
+{% block content %}
+<div class="container">
+    <div class="row my-3">
+        <div class="col-sm-6 offset-sm-3">
+            <h3> Log Out Page </h3>
+            <fieldset>
+                <form method='post' class='shadow p-5'>
+                    {% csrf_token %}
+                    <h3> Are You Sure You Want To Sign Out ? </h3>
+                    <input type="submit" value='Sign Out' class='btn btn-info'>
+                    <a class='btn btn-secondary' href="{% url 'home' %}">Cancel</a>
+                    
+                </form>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

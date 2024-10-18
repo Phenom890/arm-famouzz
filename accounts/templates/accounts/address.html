@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+
+
+{% block title %}
+    Address
+{% endblock title %}
+
+
+
+{% block content %}
+    <div class="container my-5">
+        <div class="row">
+            <h3> Welcome <span class="text-capitalize"> {{ request.user }} </span></h3>
+        
+        <div class="col-sm-2 border-end">
+            <ul class="list-unstyled">
+                <li class="d-grid"><a href="{% url 'profile_update' %}" class="btn">
+                <i class="fas fa-user-alt me-2"></i>Profile</a>
+                </li>
+                <li class="d-grid"><a href="{% url 'address' %}" class="btn btn-primary"><i class="fas fa-address-card me-2"></i>Address</a></li>
+                <li class="d-grid"><a href="{% url 'orders' %}" class="btn">Orders</a>
+                </li>
+            </ul>
+        </div>
+            <div class="col-sm-8 offset-sm-2">
+                <div class="row">
+                
+                    {% for address in addresses %}
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card text-center">
+                                <div class="card-header">
+                                    Address {{ forloop.counter }}
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Locality : 
+                                    {{ address.locality }}</h5>
+                                    
+                                    <p class="card-text">Street Name : 
+                                    {{ address.street_name }}
+                                    </p>
+                                    <p class="card-text">House Number : 
+                                    {{ address.house_number }}
+                                    </p>
+                                    <p class="card-text">Region : 
+                                    {{ address.get_region_display }} 
+                                    </p>
+
+                                    {% if address.default %}
+                                        <div>
+                                            <label for="Default">
+                                                Default
+                                                <input type="checkbox" name="Default" id="Default" checked>
+                                            </label>
+                                        </div>
+                                    {% else %}
+                                        <div>
+                                            <a href="{% url 'make_default' address.id %}" class="btn btn-success mb-2">Make Default
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    <a href="{% url 'update_address' address.id %}" class="btn btn-primary">Update</a>
+
+                                    <a href="{% url 'delete_address' address.id %}" class="btn btn-danger">Delete</a>
+                                </div>
+                                <div class="card-footer text-body-secondary">
+                                    Date Created : {{ address.created }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+                    
+                
+            </div>
+        </div>
+    </div>
+{% endblock content %}

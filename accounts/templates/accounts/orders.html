@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+
+
+{% block title %}
+    Orders
+{% endblock title %}
+
+
+
+{% block content %}
+    <div class="container my-5">
+        <div class="row">
+            <h3> Welcome <span class="text-capitalize"> {{ request.user }} </span></h3>
+        
+        <div class="col-sm-2 border-end">
+            <ul class="list-unstyled">
+                <li class="d-grid"><a href="{% url 'profile_update' %}" class="btn">
+                <i class="fas fa-user-alt me-2"></i>Profile</a>
+                </li>
+                <li class="d-grid"><a href="{% url 'address' %}" class="btn"><i class="fas fa-address-card me-2"></i>Address</a></li>
+                <li class="d-grid"><a href="{% url 'orders' %}" class="btn btn-primary">Orders</a></li>
+            </ul>
+        </div>
+            <div class="col-sm-8 offset-sm-2">
+                <h1> Orders </h1>
+
+                <div class="row">
+                
+                    <div class="col-md-5 col-lg-5 border-end">
+                        <ul class="list-unstyled">
+                            
+                            {% for order in orders %}      
+                                <li class="d-grid">
+                                    <a href="{% url 'order_item' order.id %}" class="btn">
+                                        <ul class='list-unstyled'>
+                                            <li><h6>Ref Code : {{ order.ref_code }}</h6></li>
+                                            <li>Refund Requested : {{ order.refund_requested }}</li>
+                                            <li>Refund Granted : {{ order.refund_granted }}
+                                            </li>
+                                            <li>Created : {{ order.created }}</li>
+                                            <li>Ordered : {{ order.ordered }}</li>
+                                        </ul>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                                
+                    </div>
+                    
+                    <div class="col-md-7 col-lg-7">
+
+                        <div class="row">
+                        
+                            {% for order_item in order_items %}
+                                <div class="col-lg-6 col-md-6 text-center">
+                                    <p> {{ order_item.item.name }} </p>
+                                    <p>Price : GHS {{ order_item.item.price }} </p>
+                                    <p>Category :  {{ order_item.item.get_category_display }} </p>
+                                    <p> {{ order_item.item.get_tag_display }} </p>
+                                    <p> {{ order_item.item.description | truncatechars:20 }} </p>
+                                </div>
+                            {% endfor %}
+                                
+                        </div>
+                    </div>
+                
+                </div>
+                    
+                
+            </div>
+        </div>
+    </div>
+{% endblock content %}

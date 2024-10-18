@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% include 'core/_links.html' %}
+
+    <title>ArmFamouzz | {% block title %} {% endblock title %}</title>
+
+
+</head>
+<body>
+    {% include 'core/_header.html' %}
+    {% include 'core/_carousel.html' %}
+    {% include 'core/_navbar.html' %}
+
+    <div class="container">
+        
+        {% if messages %}
+            
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+                
+        {% endif %}
+            
+        {% block content %}
+            
+        {% endblock content %}
+            
+    </div>
+    {% include 'core/_footer.html' %}
+
+    {% include 'core/_scripts.html' %}
+</body>
+</html>

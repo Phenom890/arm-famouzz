@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    Sign In
+{% endblock title %}
+
+
+
+
+
+
+{% block content %}
+<div class="container">
+    <div class="row my-3">
+        <div class="col-sm-6 offset-sm-3">
+            <h3 class='text-center'> Sign In  </h3>
+            <fieldset>
+                <form method='post' novalidate class='shadow p-5'>
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <button type="submit" class="btn btn-info"><i class="fas fa-unlock me-2"></i>Sign In</button>
+                    <small class='text-center text-primary fw-fold text-dark '>
+                        <a class='text-decoration-none' href="{% url 'password_reset' %}">
+                            Forgot Password ? 
+                        </a>
+                    </small>
+                    <br>
+                    <small class='text-center text-primary fw-fold text-dark '>
+                        Need An Account? 
+                        <a class='text-decoration-none' href="{% url 'register' %}">Sign Up </a>
+                    </small>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+<

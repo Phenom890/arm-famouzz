@@ -1,0 +1,162 @@
+{% extends 'core/base.html' %}
+
+
+{% block title %}
+    Product Details
+{% endblock title %}
+
+
+
+{% block content %}
+    
+    <!--Main layout-->
+    <main class="mt-5 pt-4">
+        <div class="container mt-5">
+            <!--Grid row-->
+            <div class="row">
+                <!--Grid column-->
+                <div class="col-md-6 mb-4">
+                    <img src="{{ product.image.url }}" class="img-fluid" width="300"
+                    height="300" alt="" />
+                </div>
+                <!--Grid column-->
+
+                <!--Grid column-->
+                <div class="col-md-6 mb-4">
+                    <!--Content-->
+                    <div class="p-4">
+                        <div class="mb-3">
+                        
+                            <a href="{% url 'search' %}?q={{ product.category }}">
+                                <span class="badge bg-dark me-1"><i class="fas fa-tags">
+                                </i>
+                                {{ product.get_category_display }}</span>
+                            </a>
+                            <a href="{% url 'search' %}?q={{ product.tag }}">
+                                <span class="badge bg-{{ product.tag }} me-1">
+                                <i class="fas fa-tags"></i>
+                                {{ product.get_tag_display }}</span>
+                                
+                            </a>
+                        </div>
+
+                        <p class="lead">
+                            
+                            {% if product.discount_price %}
+                                
+                                <span class="me-1">
+                                    <del>GHS {{ product.price }}</del>
+                                </span>
+
+                                <span>GHS {{ product.discount_price }}</span>
+                            {% else %}
+                                <span>GHS {{ product.price }}</span>
+                            {% endif %}
+                                
+                        </p>
+
+                        <strong><p style="font-size: 20px;">Description</p></strong>
+
+                        <p>{{ product.description }}.</p>
+
+                        <form class="d-flex justify-content-left" method="POST">
+                            {% csrf_token %}
+
+                            {% comment %} this checks to see if the product is out of stock or not  {% endcomment %}
+                                {% if product.tag == 'danger' %}
+                                    <a href="{% url 'sold_out' %}" class="btn btn-disabled ms-1">
+                                        Add to cart
+                                        <i class="fas fa-shopping-cart ms-1"></i>
+                                    </a>
+                                {% else %}
+                                    {% comment %} this shows that the product is not out of stock and also a cart item {% endcomment %}
+                                    {% if in_cart %}
+
+                                    
+                                    <a class="btn btn-sm me-2" href="{% url 'minus_cart' product.id %}"><i class="fas fa-minus"></i></a>
+                                        <strong>{{ cart_item.quantity }}</strong>
+                                    <a class="btn btn-sm me-2" href="{% url 'plus_cart' product.id %}"><i class="fas fa-plus"></i></a>
+
+                                    <a href="{% url 'remove_from_cart' product.id %}"class="btn btn-danger me-2"><i class="fas fa-trash ms-1"></i>Remove</a>
+
+                                    
+                                    {% else %}
+
+                                    {% comment %} this means the product is not yet a cart item {% endcomment %}
+                                    <button class="btn btn-primary ms-1" type="submit">
+                                        Add to cart
+                                        <i class="fas fa-shopping-cart ms-1"></i>
+                                    </button>
+                                    {% endif %}
+
+                                {% endif %}
+
+                        </form>
+                    </div>
+                    <!--Content-->
+                </div>
+                <!--Grid column-->
+            </div>
+            <!--Grid row-->
+
+            <hr />
+
+            <!--Grid row-->
+            <div class="row d-flex justify-content-center">
+                <!--Grid column-->
+                <div class="col-md-6 text-center">
+                    <h4 class="my-4 h4">Similar Products</h4>
+
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus suscipit modi sapiente illo soluta odit voluptates, quibusdam officia. Neque quibusdam quas a quis porro? Molestias illo neque eum in laborum.</p>
+                </div>
+                <!--Grid column-->
+            </div>
+            <!--Grid row-->
+
+            
+            <div class="row">
+
+                <h3><center>{{ category_products.first.get_category_display }} Products
+                </center></h3>
+                <hr>
+                {% for c_product in category_products %}
+                    
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="row">
+                            <div class="col-lg-4">
+                        
+                                <a href="{% url 'product_display' c_product.id %}">
+                                    <img src="{{ c_product.image.url }}" class="img-fluid" width="150" height="150" alt="" />
+                                </a>
+                            </div>
+                            <div class="col-lg-8">
+                            {{ c_product.description }}
+                            </div>
+                            </div>
+                        </div>
+
+                {% endfor %}
+
+                <h3><center>{{ tag_products.first.get_tag_display }} Products
+                </center></h3>
+                <hr>
+                {% for t_product in tag_products %}      
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <a href="{% url 'product_display' t_product.id %}">
+                                    <img src="{{ t_product.image.url }}" class="img-fluid" width="150" height="150" alt="" />
+                                </a>
+                            </div>
+                            <div class="col-lg-8">
+                            {{ t_product.description }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+    
+{% endblock content %}
+    

@@ -1,0 +1,120 @@
+{% extends 'core/base.html' %}
+{% load cart_template_tags %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+    Checkout
+{% endblock title %}
+    
+
+{% block content %}
+    
+
+<!--Main layout-->
+<main class="mt-5 pt-4">
+    <div class="container">
+        <!-- Heading -->
+        <h2 class="my-5 text-center">Checkout form</h2>
+
+        <!--Grid row-->
+        <div class="row">
+            <!--Grid column-->
+            <div class="col-md-8 mb-4">
+                <!--Card-->
+                <form action="{% url 'checkout' %}" method="POST">
+                {% csrf_token %}
+                {{ form | crispy }}
+                
+                {% if default %}
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="True" name="use_default" checked />
+                        <label class="form-check-label" for="flexCheckDefault">
+                        Use Default ({{ default }})</label>
+                    </div>
+                {% else %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="True" name="save_default" checked />
+                        <label class="form-check-label" for="flexCheckDefault">Save this information for next time</label>
+                    </div>
+                {% endif %}
+                            <hr class="mb-4" />                    
+                            <div>
+                            
+                                <button class="btn btn-warning text-white " type="submit">
+                                    <i class="fas fa-dolly me-2"></i>Continue to checkout
+                                </button>
+                            </div>
+                        <div class="my-3">
+
+
+                        </div>
+
+                   
+                
+                </form>
+                <!--/.Card-->
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-md-4 mb-4">
+                <!-- Heading -->
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Your cart</span>
+                    <span class="badge rounded-pill badge-primary">
+                    {{ request.user | cart_item_count }}</span>
+                </h4>
+
+                <!-- Cart -->
+                <ul class="list-group mb-3">
+                    
+                    {% for cart_item in cart %}
+                        
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div>
+                                <h6 class="my-0">{{ cart_item.item }}</h6>
+                                <small class="text-muted">{{ cart_item.item.description | truncatechars:30 }}</small>
+                            </div>
+                            <span class="text-muted">GHS
+                            {{ cart_item.get_final_price }} x {{ cart_item.quantity }}
+                            </span>
+                        </li>
+
+                    {% endfor %}
+                        
+                    
+                    {% if order.coupon %}      
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total Cost</span>
+                            <strong>GHS {{ order.get_final_cost }}</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ order.coupon }}</span>
+                            <strong>- {{ order.coupon.coupon_percentage }}%</strong>
+                        </li>
+                    {% endif %}
+                        
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Amount Payable (GHS)</span>
+                        <strong>GHS {{ order.get_total_amount }}</strong>
+                    </li>
+                </ul>
+                <!-- Cart -->
+                
+                {% if not order.coupon %}
+                    <!-- Promo code -->
+                {% include 'core/_promocode.html' %}
+                    <!-- Promo code -->
+                {% endif %}
+                    
+            </div>
+            <!--Grid column-->
+        </div>
+        <!--Grid row-->
+    </div>
+</main>
+
+{% endblock content %}
+    

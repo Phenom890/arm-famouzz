@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Profile
+{% endblock title %}
+
+
+
+{% block content %}
+    <div class="container my-5">
+        <div class="row">
+            <h3> Welcome <span class="text-capitalize"> {{ request.user }} </span></h3>
+        
+        <div class="col-sm-2 border-end">
+            <ul class="list-unstyled">
+                <li class="d-grid"><a href="{% url 'profile_update' %}" class="btn btn-primary"><i class="fas fa-user-alt me-2"></i>Profile</a></li>
+                <li class="d-grid"><a href="{% url 'address' %}" class="btn"><i class="fas fa-address-card me-2"></i>Address</a>
+                </li>
+                <li class="d-grid"><a href="{% url 'orders' %}" class="btn">Orders</a>
+                </li>
+            </ul>
+        </div>
+            <div class="col-sm-8 offset-sm-2">
+                <ul class="list-unstyled">
+                
+                    <li><h3><center>Username : {{ request.user.username }}</li></center></h3>
+                    <li><h3><center>Email : {{ request.user.email }}</li></center></h3>
+                    <li><h3><center>Gender : {{ profile.get_gender_display }}</li></center></h3>
+                </ul>
+                <div>
+                
+                    <h3>
+                        <center>User Bio</center>
+                    </h3>
+                    <p class="text-center"> {{ profile.bio }} </p>
+
+                </div>
+                <center>
+                    <a class="btn btn-primary" href="{% url 'profile_update' %}">Update Profile</a>
+                    <a class="btn btn-primary" href="{% url 'change_password' %}">
+                    Change Password</a>
+                </center>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

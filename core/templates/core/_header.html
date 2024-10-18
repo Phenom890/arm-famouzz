@@ -1,0 +1,84 @@
+{% load static %}
+{% load cart_template_tags %}
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white">
+  <!-- Container wrapper -->
+  <div class="container">    
+    <!-- Toggle button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-mdb-toggle="collapse"
+      data-mdb-target="#navbarSupportedContent1"
+      aria-controls="navbarSupportedContent1"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent1">      
+      <!-- Navbar brand -->
+      <a class="navbar-brand mt-2 mt-sm-0" href="https://mdbootstrap.com/">
+        <img
+          src="{% static 'core/img/mdb-favicon.ico' %}"
+          height="20"
+          alt="MDB Logo"
+          loading="lazy"
+        />
+      </a>
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item active">
+          <a class="nav-link " href="/">Home</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link " href="{% url 'about' %}">About</a>
+        </li>
+      
+      </ul>
+      <!-- Left links -->      
+    </div>
+    <!-- Collapsible wrapper -->
+    
+    <!-- Right elements -->
+    <div class="d-flex align-items-center">
+      <!-- Icon -->
+      
+      {% if request.user.is_authenticated %}
+        <a class="nav-link me-3" href="{% url 'show_cart' %}">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="badge rounded-pill badge-notification bg-danger">
+          {{ request.user | cart_item_count }}</span>
+        </a>
+        <a class="nav-link me-3" href="{% url 'profile_update' %}">
+          <i class="fas fa-user-edit"></i>
+        </a>
+        <a class="nav-link me-3" href="{% url 'logout' %}">
+          <i class="fas fa-sign-out-alt"></i>
+          Sign-out
+        </a>
+      {% else %}
+          <a class="nav-link me-3" href="{% url 'show_cart' %}">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge rounded-pill badge-notification bg-danger">
+            0</span>
+          </a>
+            <a class="nav-link me-3" href="{% url 'login' %}">
+          <i class="fas fa-sign-in-alt"></i>
+          Sign In
+        </a>
+          <a class="nav-link me-3" href="{% url 'register' %}">
+          <i class="fas fa-edit"></i>
+          Sign-Up
+        </a>
+        
+      {% endif %}
+        
+    </div>
+    <!-- Right elements -->
+    
+  </div>
+  <!-- Container wrapper -->
+</nav>
