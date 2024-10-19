@@ -129,3 +129,15 @@ class Refund(models.Model):
 
     def __str__(self):
         return self.issuer.username
+
+
+class Contact(models.Model):
+    contactor = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField(null=True, blank=True)
+    message = models.TextField()
+    date_sent = models.DateTimeField(default=timezone.now)
+    sent = models.BooleanField(default=False)
+    seen = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.contactor.username}'s Contact Form"

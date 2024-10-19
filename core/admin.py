@@ -2,11 +2,26 @@ from django.contrib import admin
 from django.contrib import messages
 from django.utils.translation import ngettext
 
-from .models import Product, Order, OrderItem, Address, Coupon, Refund
+from .models import Product, Order, OrderItem, Address, Coupon, Refund, Contact
 
 
 class OrderItemPanel(admin.ModelAdmin):
     list_display = ['owner', 'item', 'quantity', 'ordered']
+
+
+class ContactPanel(admin.ModelAdmin):
+    list_display = ['contactor', 'email', 'date_sent', 'seen']
+
+    @admin.action(description="Mark as seen")
+    def make_seen_true(self, request, queryset):
+        queryset.update(seen=True)
+        self.message_user(request, ngettext(
+            '%d contact was successfully marked as seen.',
+            '%d contacts were successfully marked as seen',
+            queryset.count(),
+        ) % queryset.count(), messages.SUCCESS)
+
+    actions = [make_seen_true]
 
 
 class OrderPanel(admin.ModelAdmin):
@@ -47,8 +62,13 @@ class AddressPanel(admin.ModelAdmin):
 
 
 admin.site.register(Product)
+admin.site.register(Contact, ContactPanel)
 admin.site.register(Refund, RefundPanel)
 admin.site.register(Address, AddressPanel)
 admin.site.register(OrderItem, OrderItemPanel)
 admin.site.register(Order, OrderPanel)
 admin.site.register(Coupon, CouponPanel)
+
+admin.site.site_header = 'Armfamouzz'
+admin.site.site_title = 'Armfamouzz'
+admin.site.site_index_title = 'Welcome To Armfamouzz'

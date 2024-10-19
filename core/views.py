@@ -2,14 +2,17 @@ import random
 import string
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic import ListView
 
-from .forms import AddressForm, RefundForm
-from .models import Product, OrderItem, Order, Address, Coupon, Refund
+from .forms import AddressForm, RefundForm, ContactForm
+from .models import Product, OrderItem, Order, Address, Coupon, Refund, Contact
 
 
 def sold_out_view(request):
@@ -35,11 +38,35 @@ def is_valid_form(values: list[vars]):
     return valid
 
 
-class HomeView(ListView):
-    model = Product
-    context_object_name = "products"
-    template_name = 'core/index.html'
-    paginate_by = 4
+@login_required(login_url='login')
+def plus_cart(request, pk):
+    product = get_object_or_404(Product, id=pk)
+    item = OrderItem.objects.filter(owner=request.user, item=product, ordered=False).first()
+    item.quantity += 1
+    item.save()
+    return redirect('product_display', pk=product.id)
+
+
+@login_required(login_url='login')
+def minus_cart(request, pk):
+    product = get_object_or_404(Product, id=pk)
+    item = OrderItem.objects.filter(owner=request.user, item=product, ordered=False).first()
+    if item.quantity > 1:
+        item.quantity -= 1
+    item.save()
+    return redirect('product_display', pk=product.id)
+
+
+@login_required(login_url='login')
+def remove_from_cart(request, pk):
+    product = get_object_or_404(Product, id=pk)
+    cart_items = OrderItem.objects.filter(owner=request.user, item=product, ordered=False)
+    if cart_items:
+        cart_item = cart_items.first()
+        cart_item.delete()
+    else:
+        messages.error(request, 'You Cannot delete this item')
+    return redirect('product_display', pk=product.id)
 
 
 def search(request):
@@ -58,12 +85,47 @@ def search(request):
     return render(request, 'core/search.html', context)
 
 
+class HomeView(ListView):
+    model = Product
+    context_object_name = "products"
+    template_name = 'core/index.html'
+    paginate_by = 4
+
+
 class AboutView(View):
     def get(self, request):
         return render(request, 'core/about.html')
 
 
-class ProductView(View):
+class ContactView(LoginRequiredMixin, View):
+    def get(self, request, username):
+        form = ContactForm()
+        context = {
+            'form': form,
+        }
+        return render(request, 'core/contact.html', context)
+
+    def post(self, request, username):
+        user_contact = get_object_or_404(User, username=username)
+        form = ContactForm(request.POST or None)
+        if form.is_valid():
+            msg = form.cleaned_data.get('message')
+
+            contact = Contact()
+            contact.contactor = user_contact
+            contact.email = user_contact.email
+            contact.message = msg
+            contact.sent = True
+            contact.save()
+            messages.success(request,
+                             'Thank You for your feedback, we will get back to you soon!')
+            return redirect('home')
+
+        messages.error(request, 'Message not sent, please try again!')
+        return redirect('contact')
+
+
+class ProductView(LoginRequiredMixin, View):
     def get(self, request, pk):
         product = get_object_or_404(Product, id=pk)
         cat = product.category  # get the category of the product
@@ -108,7 +170,7 @@ class ProductView(View):
         return redirect('product_display', pk=product.id)
 
 
-class CartView(View):
+class CartView(LoginRequiredMixin, View):
     def get(self, request):
         order_qs = Order.objects.filter(owner=request.user, ordered=False)
         if order_qs:
@@ -132,7 +194,7 @@ class CartView(View):
                 'later!!!</center> </h1>')
 
 
-class CheckoutView(View):
+class CheckoutView(LoginRequiredMixin, View):
     def get(self, request):
         order = Order.objects.filter(owner=request.user, ordered=False).first()
         cart = order.items.all()
@@ -195,7 +257,7 @@ class CheckoutView(View):
         return redirect('payment')
 
 
-class PaymentView(View):
+class PaymentView(LoginRequiredMixin, View):
     def get(self, request):
         order = Order.objects.filter(owner=request.user, ordered=False).first()
         cart = order.items.all()
@@ -225,35 +287,7 @@ class PaymentView(View):
         return redirect('payment')
 
 
-def plus_cart(request, pk):
-    product = get_object_or_404(Product, id=pk)
-    item = OrderItem.objects.filter(owner=request.user, item=product, ordered=False).first()
-    item.quantity += 1
-    item.save()
-    return redirect('product_display', pk=product.id)
-
-
-def minus_cart(request, pk):
-    product = get_object_or_404(Product, id=pk)
-    item = OrderItem.objects.filter(owner=request.user, item=product, ordered=False).first()
-    if item.quantity > 1:
-        item.quantity -= 1
-    item.save()
-    return redirect('product_display', pk=product.id)
-
-
-def remove_from_cart(request, pk):
-    product = get_object_or_404(Product, id=pk)
-    cart_items = OrderItem.objects.filter(owner=request.user, item=product, ordered=False)
-    if cart_items:
-        cart_item = cart_items.first()
-        cart_item.delete()
-    else:
-        messages.error(request, 'You Cannot delete this item')
-    return redirect('product_display', pk=product.id)
-
-
-class AddCoupon(View):
+class AddCoupon(LoginRequiredMixin, View):
     def post(self, request):
         order = Order.objects.filter(owner=request.user, ordered=False).first()
         promo_code = request.POST.get('promo_code')
@@ -268,7 +302,7 @@ class AddCoupon(View):
         return redirect('checkout')
 
 
-class RequestRefundView(View):
+class RequestRefundView(LoginRequiredMixin, View):
     def get(self, request, pk):
         order = get_object_or_404(Order, id=pk)
         form = RefundForm()
