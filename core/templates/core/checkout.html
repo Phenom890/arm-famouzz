@@ -24,12 +24,7 @@
                 <!--Card-->
                 <form action="{% url 'checkout' %}" method="POST">
                 {% csrf_token %}
-                
-                {% if not default %}
                     {{ form | crispy }}
-                    
-                {% endif %}
-                    
                 
                 {% if default %}
                     
