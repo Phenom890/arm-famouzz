@@ -122,7 +122,7 @@ class ContactView(LoginRequiredMixin, View):
             return redirect('home')
 
         messages.error(request, 'Message not sent, please try again!')
-        return redirect('contact')
+        return redirect('contact', username=user_contact.username)
 
 
 class ProductView(LoginRequiredMixin, View):
