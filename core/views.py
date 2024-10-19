@@ -262,6 +262,7 @@ class AddCoupon(View):
             promo = promo_exists.first()
             order.coupon = promo
             order.save()
+            messages.success(request, f'"{promo_code}" coupon successfully added to your order!')
             return redirect('checkout')
         messages.error(request, 'Invalid Coupon Code!')
         return redirect('checkout')
@@ -299,6 +300,3 @@ class RequestRefundView(View):
 
         messages.error(request, 'Refund request was not successful! Try again!!')
         return redirect('request_refund', pk=order.id)
-
-
-
