@@ -23,7 +23,7 @@ def get_ref_code():
         string.ascii_letters +
         string.ascii_uppercase +
         string.ascii_lowercase,
-        k=30
+        k=20
     ))
 
 
@@ -283,7 +283,7 @@ class RequestRefundView(View):
         form = RefundForm(request.POST or None)
         if form.is_valid():
             msg = form.cleaned_data.get('reason')
-            form.save()
+
             # create an instance of refund and populate it
             refund = Refund()
             refund.issuer = request.user
@@ -294,8 +294,8 @@ class RequestRefundView(View):
             order.refund_requested = True
             order.save()
             messages.success(request, 'Refund requested successfully! We will get back to you '
-                                      'shortyly')
-            return redirect('home')
+                                      'shortly')
+            return redirect('orders')
 
         messages.error(request, 'Refund request was not successful! Try again!!')
         return redirect('request_refund', pk=order.id)

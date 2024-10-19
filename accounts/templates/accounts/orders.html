@@ -18,15 +18,16 @@
                 <i class="fas fa-user-alt me-2"></i>Profile</a>
                 </li>
                 <li class="d-grid"><a href="{% url 'address' %}" class="btn"><i class="fas fa-address-card me-2"></i>Address</a></li>
-                <li class="d-grid"><a href="{% url 'orders' %}" class="btn btn-primary">Orders</a></li>
+                <li class="d-grid"><a href="{% url 'orders' %}" class="btn btn-primary"><i class="fas fa-dolly-flatbed me-2"></i>Orders</a></li>
             </ul>
         </div>
             <div class="col-lg-8 offset-lg-2">
-                <h1> Orders </h1>
+                <h1><center> Orders </center></h1>
+                <hr>
 
                 <div class="row">
                 
-                    <div class="col-md-5 col-lg-5 border-end">
+                    <div class="col-md-6 col-lg-5 border-end">
                         <ul class="list-unstyled">
                             
                             {% for order in orders %}      
@@ -43,11 +44,15 @@
                                             
                                             {% if order.coupon %}
                                                 <li> {{ order.coupon }} - {{ order.coupon.coupon_percentage }}%</li>
+                                                <li><strong>Cost : GHS{{ order.get_final_cost }}</strong>
+                                                </li>
                                             {% endif %}
                                                 
-                                            <li>TOTAL : GHS {{ order.get_total_amount }}
+                                            <li><strong>TOTAL : GHS {{ order.get_total_amount }}</strong>
                                             </li>
                                         </ul>
+                                        
+                                            
                                     </a>
                                 </li>
                             {% endfor %}
@@ -56,11 +61,14 @@
                                 
                     </div>
                     
-                    <div class="col-md-7 col-lg-7">
+                    <div class="col-md-6 col-lg-7">
                         <div class="row">
                         
                         {% if order_items %}
                             <h5><center>Ref Code : {{ curr_order.ref_code }}</center></h5>
+                        {% endif %}
+                        {%if curr_order.ordered and curr_order.refund_requested == False%}
+                            <a href="{% url 'request_refund' curr_order.id %}" class="btn btn-sm btn-info">Request Refund</a>
                         {% endif %}
                             
                         

@@ -136,8 +136,6 @@ class OrderItemView(View):
         return render(request, 'accounts/orders.html', context)
 
 
-
-
 def make_default(request, pk):
     user_addresses = Address.objects.filter(owner=request.user)
     curr_address = get_object_or_404(Address, id=pk)

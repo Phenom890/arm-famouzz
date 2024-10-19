@@ -71,10 +71,10 @@ class OrderItem(models.Model):
 
 class Order(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    ref_code = models.CharField(unique=True, max_length=30)
+    ref_code = models.CharField(unique=True, max_length=20)
     items = models.ManyToManyField(OrderItem)
-    address = models.ForeignKey('Address', on_delete=models.SET_NULL, null=True)
-    coupon = models.ForeignKey('Coupon', on_delete=models.SET_NULL, null=True)
+    address = models.ForeignKey('Address', on_delete=models.SET_NULL, null=True, blank=True)
+    coupon = models.ForeignKey('Coupon', on_delete=models.SET_NULL, null=True, blank=True)
     refund_requested = models.BooleanField(default=False)
     refund_granted = models.BooleanField(default=False)
     ordered = models.BooleanField(default=False)
