@@ -21,5 +21,3 @@ urlpatterns = [
     path('request/refund/<int:pk>/', views.RequestRefundView.as_view(), name='request_refund'),
 
 ]
-
-
