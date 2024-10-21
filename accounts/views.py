@@ -12,7 +12,7 @@ from .forms import (
     ProfileForm,
     AddressForm
 )
-from .models import Profile
+from .models import Profile, AdminReply
 
 
 @login_required(login_url='login')
@@ -153,3 +153,12 @@ class OrderItemView(LoginRequiredMixin, View):
             'order_items': curr_order_item,
         }
         return render(request, 'accounts/orders.html', context)
+
+
+class AdminReplyView(View):
+    def get(self, request):
+        admin_message = AdminReply.objects.filter(receiver=request.user)
+        context = {
+            "messages": admin_message,
+        }
+        return render(request, 'accounts/admin_reply.html', context)
