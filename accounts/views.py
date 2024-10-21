@@ -159,6 +159,18 @@ class AdminReplyView(View):
     def get(self, request):
         admin_message = AdminReply.objects.filter(receiver=request.user)
         context = {
-            "messages": admin_message,
+            "reply_messages": admin_message,
+        }
+        return render(request, 'accounts/admin_reply.html', context)
+
+
+class AdminReplyFullView(View):
+    def get(self, request, pk):
+        curr_message = get_object_or_404(AdminReply, id=pk)
+        admin_message = AdminReply.objects.filter(receiver=request.user)
+
+        context = {
+            'info': curr_message,
+            'reply_messages': admin_message,
         }
         return render(request, 'accounts/admin_reply.html', context)

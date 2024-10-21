@@ -14,10 +14,13 @@
         
         <div class="col-sm-2 border-end">
             <ul class="list-unstyled">
-                <li class="d-grid"><a href="{% url 'profile_update' %}" class="btn btn-primary"><i class="fas fa-user-alt me-2"></i>Profile</a></li>
+                <li class="d-grid"><a href="{% url 'profile_update' %}" class="btn"><i class="fas fa-user-alt me-2"></i>Profile</a></li>
                 <li class="d-grid"><a href="{% url 'address' %}" class="btn"><i class="fas fa-address-card me-2"></i>Address</a>
                 </li>
                 <li class="d-grid"><a href="{% url 'orders' %}" class="btn"><i class="fas fa-dolly-flatbed me-2"></i>Orders</a>
+                </li>
+                <li class="d-grid"><a href="{% url 'admin_reply' %}" class="btn btn-primary">
+                <i class="fas fa-envelope me-2"></i>Inbox</a>
                 </li>
             </ul>
         </div>
@@ -25,32 +28,40 @@
                 <div class="row">
                 
                     <div class="col-md-6 col-lg-4">
-                        {% for message in messages %}
-                            <div>
-                                <p> To: <strong>{{ message.receiver }}</strong></p>
-                                <p> Replying to : <strong>{{ message.reply_to }}</strong></p>
-                                <p> Date Sent : <strong>{{ message.date_created }}</strong></p>
-                            </div>
-                           
+                        {% for message in reply_messages %}
+                            <a href="{% url 'admin_reply_full' message.id %}" class="text-decoration-none">
+                                <div>
+                                    <p> To: <strong>{{ message.receiver }}</strong></p>
+                                    <p> Replying to : <strong>{{ message.reply_to }}
+                                    </strong></p>
+                                    <p> Date Sent : <strong>{{ message.date_created }}</strong></p>
+                                </div>
+                            </a>
+                            <hr>
+                        
                         {% endfor %}
                     
                     </div>
-
-                    <div class="col-md-6 col-lg-8">
-                        <div>
-                                Message : {{ message.message }}
-                            </div>
+                    
+                    {% if info %}             
+                        <div class="col-md-6 col-lg-8">
                             <div>
-                            
-                            <form action="" method="POST">
-                                {% csrf_token %}
-                                <label for="read">
-                                    Seen
-                                    <input type="checkbox" name="read" value='True' checked>
-                                </label>
-                            </form>
+                                <h3>{{ info.reply_to }}</h3>
+                                    Message : {{ info.message }}
+                                </div>
+                                <div>
+                                
+                                <form action="." method="POST">
+                                    {% csrf_token %}
+                                    <label for="read">
+                                        Seen
+                                        <input type="checkbox" name="read" value='True' False>
+                                    </label>
+                                </form>
                             </div>
-                    </div>
+                        </div>
+                    {% endif %}
+                        
 
                 </div>
                 

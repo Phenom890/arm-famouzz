@@ -10,7 +10,7 @@ class OrderItemPanel(admin.ModelAdmin):
 
 
 class ContactPanel(admin.ModelAdmin):
-    list_display = ['contactor', 'email', 'date_sent', 'seen']
+    list_display = ['contactor', 'email', 'subject', 'date_sent', 'seen']
 
     @admin.action(description="Mark as seen")
     def make_seen_true(self, request, queryset):
