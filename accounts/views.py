@@ -174,3 +174,4 @@ class AdminReplyFullView(View):
             'reply_messages': admin_message,
         }
         return render(request, 'accounts/admin_reply.html', context)
+
