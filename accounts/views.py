@@ -158,9 +158,11 @@ class OrderItemView(LoginRequiredMixin, View):
 class AdminReplyView(View):
     def get(self, request):
         admin_message = AdminReply.objects.filter(receiver=request.user)
+
         context = {
             "reply_messages": admin_message,
         }
+
         return render(request, 'accounts/admin_reply.html', context)
 
 
