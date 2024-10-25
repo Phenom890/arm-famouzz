@@ -19,6 +19,9 @@
                 </li>
                 <li class="d-grid"><a href="{% url 'address' %}" class="btn"><i class="fas fa-address-card me-2"></i>Address</a></li>
                 <li class="d-grid"><a href="{% url 'orders' %}" class="btn btn-primary"><i class="fas fa-dolly-flatbed me-2"></i>Orders</a></li>
+                <li class="d-grid"><a href="{% url 'admin_reply' %}" class="btn">
+                <i class="fas fa-envelope me-2"></i>Inbox</a>
+                </li>
             </ul>
         </div>
             <div class="col-lg-8 offset-lg-2">
@@ -36,11 +39,12 @@
                                         <ul class='list-unstyled'>
                                             <li><h6>Ref Code : {{ order.ref_code }}</h6>
                                             </li>
+                                            <li>Created : {{ order.created }}</li>
                                             <li>Refund Requested : {{ order.refund_requested }}</li>
                                             <li>Refund Granted : {{ order.refund_granted }}
                                             </li>
-                                            <li>Created : {{ order.created }}</li>
-                                            <li>Ordered : {{ order.ordered }}</li>
+                                            <li><strong>Ordered : {{ order.ordered }}
+                                            </strong></li>
                                             
                                             {% if order.coupon %}
                                                 <li> {{ order.coupon }} - {{ order.coupon.coupon_percentage }}%</li>
@@ -77,7 +81,7 @@
                                     <p> {{ order_item.item.name }} </p>
                                     <p>Price : GHS {{ order_item.item.price }} </p>
                                     <p>Category :  {{ order_item.item.get_category_display }} </p>
-                                    <p> {{ order_item.item.get_tag_display }} </p>
+                                    <p>Tag : {{ order_item.item.get_tag_display }} </p>
                                     <p> {{ order_item.item.description | truncatechars:20 }} </p>
                                 <hr>
                                 </div>

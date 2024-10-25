@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Address, Refund
+from .models import Address, Refund, Contact
 
 REGION_CHOICES = (
     ('AS', 'Ashanti'),
@@ -48,3 +48,8 @@ class RefundForm(forms.ModelForm):
     class Meta:
         model = Refund
         fields = ['reason']
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ['message']

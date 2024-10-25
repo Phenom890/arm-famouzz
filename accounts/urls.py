@@ -20,6 +20,10 @@ urlpatterns = [
     path('address/<int:pk>/update/', views.UpdateAddress.as_view(), name='update_address'),
     path('address/<int:pk>/default/', views.make_default, name='make_default'),
     path('address/<int:pk>/delete/', views.delete_address, name='delete_address'),
+    path('reply/user/', views.AdminReplyView.as_view(), name='admin_reply'),
+    path('reply/<int:pk>/', views.AdminReplyFullView.as_view(), name='admin_reply_full'),
+    path('contacts/view/', views.SentView.as_view(), name='sent_view'),
+    path('contacts/view/<int:pk>/', views.SentFullView.as_view(), name='sent_single_view'),
 
     #   user authentication urls
     path('', views.UserRegisterView.as_view(), name='register'),

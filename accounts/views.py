@@ -1,16 +1,36 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from core.models import Address, Order
+from core.models import Contact
 from .forms import (
     UserRegisterForm,
     UserForm,
     ProfileForm,
     AddressForm
 )
-from .models import Profile
+from .models import Profile, AdminReply
+
+
+@login_required(login_url='login')
+def make_default(request, pk):
+    user_addresses = Address.objects.filter(owner=request.user)
+    curr_address = get_object_or_404(Address, id=pk)
+    user_addresses.update(default=False)
+    curr_address.default = True
+    curr_address.save()
+    return redirect('address')
+
+
+@login_required(login_url='login')
+def delete_address(request, pk):
+    curr_address = get_object_or_404(Address, id=pk)
+    curr_address.delete()
+    return redirect('address')
 
 
 class UserRegisterView(View):
@@ -28,7 +48,7 @@ class UserRegisterView(View):
             return redirect('login')
 
 
-class UserLogout(View):
+class UserLogout(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'accounts/logout.html')
 
@@ -36,7 +56,7 @@ class UserLogout(View):
         return LogoutView.as_view(next_page='login')(request)
 
 
-class UserProfileUpdateView(View):
+class UserProfileUpdateView(LoginRequiredMixin, View):
     def get(self, request):
         profile = Profile.objects.filter(user=request.user).first()
         user_form = UserForm(instance=request.user)
@@ -66,7 +86,7 @@ class UserProfileUpdateView(View):
         return render(request, 'accounts/profile_update.html', context)
 
 
-class UserProfileView(View):
+class UserProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user_profile = Profile.objects.filter(user=request.user).first()
 
@@ -76,7 +96,7 @@ class UserProfileView(View):
         return render(request, 'accounts/profile.html', context)
 
 
-class AddressView(View):
+class AddressView(LoginRequiredMixin, View):
     def get(self, request):
         address = Address.objects.filter(owner=request.user)
         context = {
@@ -85,7 +105,7 @@ class AddressView(View):
         return render(request, 'accounts/address.html', context)
 
 
-class UpdateAddress(View):
+class UpdateAddress(LoginRequiredMixin, View):
     def get(self, request, pk):
         curr_address = get_object_or_404(Address, id=pk)
         form = AddressForm(instance=curr_address)
@@ -112,7 +132,7 @@ class UpdateAddress(View):
         return render(request, 'accounts/update_address.html', context)
 
 
-class OrdersView(View):
+class OrdersView(LoginRequiredMixin, View):
     def get(self, request):
         all_orders = Order.objects.filter(owner=request.user)
 
@@ -122,7 +142,7 @@ class OrdersView(View):
         return render(request, 'accounts/orders.html', context)
 
 
-class OrderItemView(View):
+class OrderItemView(LoginRequiredMixin, View):
     def get(self, request, pk):
         all_orders = Order.objects.filter(owner=request.user)
         curr_order = get_object_or_404(Order, id=pk)
@@ -136,16 +156,72 @@ class OrderItemView(View):
         return render(request, 'accounts/orders.html', context)
 
 
-def make_default(request, pk):
-    user_addresses = Address.objects.filter(owner=request.user)
-    curr_address = get_object_or_404(Address, id=pk)
-    user_addresses.update(default=False)
-    curr_address.default = True
-    curr_address.save()
-    return redirect('address')
+class AdminReplyView(LoginRequiredMixin, View):
+    def get(self, request):
+        admin_message = AdminReply.objects.filter(receiver=request.user)
+
+        context = {
+            "reply_messages": admin_message,
+            'active': 'primary',
+
+        }
+
+        return render(request, 'accounts/admin_reply.html', context)
 
 
-def delete_address(request, pk):
-    curr_address = get_object_or_404(Address, id=pk)
-    curr_address.delete()
-    return redirect('address')
+class AdminReplyFullView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        curr_message = get_object_or_404(AdminReply, id=pk)
+        admin_message = AdminReply.objects.filter(receiver=request.user)
+
+        context = {
+            'info': curr_message,
+            'reply_messages': admin_message,
+            'active': 'primary',
+
+        }
+        return render(request, 'accounts/admin_reply.html', context)
+
+    def post(self, request, pk):
+        curr_message = get_object_or_404(AdminReply, id=pk)
+        admin_message = AdminReply.objects.filter(receiver=request.user)
+        reply = request.POST.get('reply')
+
+        contact = Contact()
+        contact.contactor = request.user
+        contact.email = request.user.email
+        contact.subject = f'Reply to "{curr_message.reply_to.subject[:50].lower()}"'
+        contact.message = reply
+        contact.sent = True
+        contact.save()
+
+        curr_message.seen = True
+        curr_message.save()
+
+        return redirect('admin_reply')
+
+
+class SentView(LoginRequiredMixin, View):
+    def get(self, request):
+        contact_message = Contact.objects.filter(contactor=request.user)
+
+        context = {
+            'contact_messages': contact_message,
+            'is_active': 'primary',
+
+        }
+        return render(request, 'accounts/admin_reply.html', context)
+
+
+class SentFullView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        curr_message = get_object_or_404(Contact, id=pk)
+        contact_message = Contact.objects.filter(contactor=request.user)
+
+        context = {
+            'info': curr_message,
+            'contact_messages': contact_message,
+            'is_active': 'primary',
+
+        }
+        return render(request, 'accounts/admin_reply.html', context)

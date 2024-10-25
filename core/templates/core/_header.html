@@ -53,11 +53,14 @@
           {{ request.user | cart_item_count }}</span>
         </a>
         <a class="nav-link me-3" href="{% url 'profile_update' %}">
-          <i class="fas fa-user-edit"></i>
+          <i class="fas fa-user-cog"></i>
+        </a>
+        <a class="nav-link me-3" href="{% url 'contact' request.user.username %}">
+          <i class="fas fa-phone me-2"></i>
         </a>
         <a class="nav-link me-3" href="{% url 'logout' %}">
           <i class="fas fa-sign-out-alt"></i>
-          Sign-out
+          
         </a>
       {% else %}
           <a class="nav-link me-3" href="{% url 'show_cart' %}">
