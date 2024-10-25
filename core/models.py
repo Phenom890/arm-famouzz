@@ -142,3 +142,6 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.subject
+
+    class Meta:
+        ordering = ['-date_sent']

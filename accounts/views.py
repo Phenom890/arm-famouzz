@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from core.models import Address, Order
+from core.models import Contact
 from .forms import (
     UserRegisterForm,
     UserForm,
@@ -13,7 +14,6 @@ from .forms import (
     AddressForm
 )
 from .models import Profile, AdminReply
-from core.models import Contact
 
 
 @login_required(login_url='login')
@@ -156,18 +156,20 @@ class OrderItemView(LoginRequiredMixin, View):
         return render(request, 'accounts/orders.html', context)
 
 
-class AdminReplyView(View):
+class AdminReplyView(LoginRequiredMixin, View):
     def get(self, request):
         admin_message = AdminReply.objects.filter(receiver=request.user)
 
         context = {
             "reply_messages": admin_message,
+            'active': 'primary',
+
         }
 
         return render(request, 'accounts/admin_reply.html', context)
 
 
-class AdminReplyFullView(View):
+class AdminReplyFullView(LoginRequiredMixin, View):
     def get(self, request, pk):
         curr_message = get_object_or_404(AdminReply, id=pk)
         admin_message = AdminReply.objects.filter(receiver=request.user)
@@ -175,6 +177,8 @@ class AdminReplyFullView(View):
         context = {
             'info': curr_message,
             'reply_messages': admin_message,
+            'active': 'primary',
+
         }
         return render(request, 'accounts/admin_reply.html', context)
 
@@ -186,7 +190,7 @@ class AdminReplyFullView(View):
         contact = Contact()
         contact.contactor = request.user
         contact.email = request.user.email
-        contact.subject = f'Reply to "{curr_message.message.lower()}"'
+        contact.subject = f'Reply to "{curr_message.reply_to.subject[:50].lower()}"'
         contact.message = reply
         contact.sent = True
         contact.save()
@@ -195,3 +199,29 @@ class AdminReplyFullView(View):
         curr_message.save()
 
         return redirect('admin_reply')
+
+
+class SentView(LoginRequiredMixin, View):
+    def get(self, request):
+        contact_message = Contact.objects.filter(contactor=request.user)
+
+        context = {
+            'contact_messages': contact_message,
+            'is_active': 'primary',
+
+        }
+        return render(request, 'accounts/admin_reply.html', context)
+
+
+class SentFullView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        curr_message = get_object_or_404(Contact, id=pk)
+        contact_message = Contact.objects.filter(contactor=request.user)
+
+        context = {
+            'info': curr_message,
+            'contact_messages': contact_message,
+            'is_active': 'primary',
+
+        }
+        return render(request, 'accounts/admin_reply.html', context)
