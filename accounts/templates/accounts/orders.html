@@ -39,11 +39,12 @@
                                         <ul class='list-unstyled'>
                                             <li><h6>Ref Code : {{ order.ref_code }}</h6>
                                             </li>
+                                            <li>Created : {{ order.created }}</li>
                                             <li>Refund Requested : {{ order.refund_requested }}</li>
                                             <li>Refund Granted : {{ order.refund_granted }}
                                             </li>
-                                            <li>Created : {{ order.created }}</li>
-                                            <li>Ordered : {{ order.ordered }}</li>
+                                            <li><strong>Ordered : {{ order.ordered }}
+                                            </strong></li>
                                             
                                             {% if order.coupon %}
                                                 <li> {{ order.coupon }} - {{ order.coupon.coupon_percentage }}%</li>
@@ -80,7 +81,7 @@
                                     <p> {{ order_item.item.name }} </p>
                                     <p>Price : GHS {{ order_item.item.price }} </p>
                                     <p>Category :  {{ order_item.item.get_category_display }} </p>
-                                    <p> {{ order_item.item.get_tag_display }} </p>
+                                    <p>Tag : {{ order_item.item.get_tag_display }} </p>
                                     <p> {{ order_item.item.description | truncatechars:20 }} </p>
                                 <hr>
                                 </div>

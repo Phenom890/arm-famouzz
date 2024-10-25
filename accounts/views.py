@@ -13,6 +13,7 @@ from .forms import (
     AddressForm
 )
 from .models import Profile, AdminReply
+from core.models import Contact
 
 
 @login_required(login_url='login')
@@ -177,3 +178,20 @@ class AdminReplyFullView(View):
         }
         return render(request, 'accounts/admin_reply.html', context)
 
+    def post(self, request, pk):
+        curr_message = get_object_or_404(AdminReply, id=pk)
+        admin_message = AdminReply.objects.filter(receiver=request.user)
+        reply = request.POST.get('reply')
+
+        contact = Contact()
+        contact.contactor = request.user
+        contact.email = request.user.email
+        contact.subject = f'Reply to "{curr_message.message.lower()}"'
+        contact.message = reply
+        contact.sent = True
+        contact.save()
+
+        curr_message.seen = True
+        curr_message.save()
+
+        return redirect('admin_reply')
