@@ -99,9 +99,11 @@ class UserProfileView(LoginRequiredMixin, View):
 class AddressView(LoginRequiredMixin, View):
     def get(self, request):
         address = Address.objects.filter(owner=request.user)
+
         context = {
             'addresses': address,
         }
+
         return render(request, 'accounts/address.html', context)
 
 
@@ -113,6 +115,7 @@ class UpdateAddress(LoginRequiredMixin, View):
         context = {
             'form': form,
         }
+
         return render(request, 'accounts/update_address.html', context)
 
     def post(self, request, pk):
@@ -129,6 +132,7 @@ class UpdateAddress(LoginRequiredMixin, View):
         context = {
             'form': form,
         }
+
         return render(request, 'accounts/update_address.html', context)
 
 
@@ -222,6 +226,6 @@ class SentFullView(LoginRequiredMixin, View):
             'info': curr_message,
             'contact_messages': contact_message,
             'is_active': 'primary',
-
         }
+
         return render(request, 'accounts/admin_reply.html', context)
