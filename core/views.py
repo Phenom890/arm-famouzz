@@ -71,6 +71,7 @@ def remove_from_cart(request, pk):
 
 def search(request):
     query = request.GET.get('q')
+
     products = Product.objects.filter(
         Q(name__icontains=query) |
         Q(description__icontains=query) |
@@ -186,6 +187,7 @@ class CartView(LoginRequiredMixin, View):
             'cart_items': cart_items,
             'order': order,
         }
+
         if cart_items:  # if the cart is not empty
             return render(request, 'core/cart.html', context)
         else:
@@ -208,6 +210,7 @@ class CheckoutView(LoginRequiredMixin, View):
             'form': form,
             'default': default,
         }
+
         return render(request, 'core/checkout.html', context)
 
     def post(self, request):
@@ -230,7 +233,6 @@ class CheckoutView(LoginRequiredMixin, View):
 
             order.address = new_address
             order.save()
-
 
         else:
             locality = request.POST.get('locality')
