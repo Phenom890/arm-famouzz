@@ -1,0 +1,1 @@
+ web gunicorn armfamouzz.wsgi:applicaion --log-file -
